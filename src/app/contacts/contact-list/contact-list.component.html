@@ -4,8 +4,10 @@
     <a href="#" class="btn btn-primary btn-sm pull-right">Create Contact</a>
   </div>
   <div class="panel-body">
-    <div *ngFor="let contact of contacts">
-      <cms-contact-item [contact]="contact"></cms-contact-item>
-    </div>
+    <cms-contact-item 
+      *ngFor="let contact of contacts" 
+      [contact]="contact" 
+      (click)="onSelected(contact)"
+    ></cms-contact-item>
   </div>
 </div>
