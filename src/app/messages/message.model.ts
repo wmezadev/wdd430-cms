@@ -1,4 +1,4 @@
-export class Mesage {
+export class Message {
     constructor(
       public id: string,
       public subject: string,
@@ -6,4 +6,3 @@ export class Mesage {
       public sender: string
     ) {}
 }
-  
