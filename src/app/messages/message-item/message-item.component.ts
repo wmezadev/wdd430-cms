@@ -1,5 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Message } from '../message.model';
+import { Contact } from '../../contacts/contact.model';
+import { ContactService } from '../../contacts/contact.service';
+
+
 
 @Component({
   selector: 'cms-message-item',
@@ -8,11 +12,13 @@ import { Message } from '../message.model';
 })
 export class MessageItemComponent implements OnInit {
   @Input() message!: Message;
+  messageSender: string = '';
 
-  constructor() { }
+  constructor(private contactService: ContactService) {}
 
-  // OnInit
-  ngOnInit(): void {
-    console.log(this.message);
+  ngOnInit() {
+    const contact: Contact | null = this.contactService.getContact(this.message.sender);
+    console.log(contact);
+    this.messageSender = contact?.name || '';
   }
 }
