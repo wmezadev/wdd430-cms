@@ -5,10 +5,29 @@ import { MessageListComponent } from './messages/message-list/message-list.compo
 import { ContactsComponent } from './contacts/contacts.component';
 import { DocumentDetailComponent } from './documents/document-detail/document-detail.component';
 import { DocumentEditComponent } from './documents/document-edit/document-edit.component';
+import { ContactEditComponent } from './contacts/contact-edit/contact-edit.component';
+import { ContactDetailComponent } from './contacts/contact-detail/contact-detail.component';
 
 const routes: Routes = [
   { path: '', redirectTo: '/documents', pathMatch: 'full' },
-  { path: 'contacts', component: ContactsComponent },
+  { 
+    path: 'contacts', 
+    component: ContactsComponent,
+    children: [
+      {
+        path: 'new',
+        component: ContactEditComponent
+      },
+      {
+        path: ':id',
+        component: ContactDetailComponent
+      },
+      {
+        path: ':id/edit',
+        component: ContactEditComponent
+      }
+    ]
+  },
   {
     path: 'documents',
     component: DocumentsComponent,
