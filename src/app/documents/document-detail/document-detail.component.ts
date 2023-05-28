@@ -29,7 +29,7 @@ export class DocumentDetailComponent implements OnInit {
   }
   onView() {
     if (this.document) {
-      this.nativeWindow.open(this.document.url, '_blank');
+      this.nativeWindow.open(this.document.url);
     }
   }
 
