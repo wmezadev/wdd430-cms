@@ -2,18 +2,18 @@
     <div class="panel-heading">
       <div class="row">
         <div class="col-md-3">
-          <img [src]="contact.imageUrl" class="img-responsive img-thumbnail">
+          <img [src]="contact?.imageUrl" class="img-responsive img-thumbnail">
         </div>
         <div class="col-md-9">
-          <h3>{{ contact.name }}</h3>
+          <h3>{{ contact?.name }}</h3>
           <button class="btn btn-primary">Edit</button>
           <button class="btn btn-danger">Delete</button>
         </div>
       </div>
     </div>
     <div class="panel-body">
-      <p><strong>Email:</strong> {{ contact.email }}</p>
-      <p><strong>Phone:</strong> {{ contact.phone }}</p>
+      <p><strong>Email:</strong> {{ contact?.email }}</p>
+      <p><strong>Phone:</strong> {{ contact?.phone }}</p>
     </div>
 </div>
   

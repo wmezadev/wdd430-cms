@@ -20,4 +20,8 @@ export class ContactService {
   getContact(id: string): Contact | null {
     return this.contacts.find(contact => contact.id === id) || null;
   }
+
+  deleteDocument(contact: Contact): void {
+    console.log("Attemp to delete " + contact.name)
+  }
 }
