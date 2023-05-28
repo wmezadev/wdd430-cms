@@ -9,10 +9,24 @@ import { DocumentEditComponent } from './documents/document-edit/document-edit.c
 const routes: Routes = [
   { path: '', redirectTo: '/documents', pathMatch: 'full' },
   { path: 'contacts', component: ContactsComponent },
-  { path: 'documents', component: DocumentsComponent },
-  { path: 'documents/new', component: DocumentEditComponent },
-  { path: 'documents/:id', component: DocumentDetailComponent },
-  { path: 'documents/:id/edit', component: DocumentEditComponent },
+  {
+    path: 'documents',
+    component: DocumentsComponent,
+    children: [
+      {
+        path: 'new',
+        component: DocumentEditComponent
+      },
+      {
+        path: ':id',
+        component: DocumentDetailComponent
+      },
+      {
+        path: ':id/edit',
+        component: DocumentEditComponent
+      }
+    ]
+  },
   { path: 'messages', component: MessageListComponent }
 ];
 
