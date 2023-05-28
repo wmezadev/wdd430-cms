@@ -6,8 +6,8 @@
         </div>
         <div class="col-md-9">
           <h3>{{ contact?.name }}</h3>
-          <a class="btn btn-primary">Edit</a>
-          <a class="btn btn-danger">Delete</a>
+          <a [routerLink]="['edit']" class="btn btn-primary">Edit</a>
+          <button (click)="onDelete()" class="btn btn-danger">Delete</button>
         </div>
       </div>
     </div>
