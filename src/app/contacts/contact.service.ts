@@ -21,7 +21,7 @@ export class ContactService {
     return this.contacts.find(contact => contact.id === id) || null;
   }
 
-  deleteDocument(contact: Contact): void {
+  deleteContact(contact: Contact): void {
     console.log("Attemp to delete " + contact.name)
   }
 }

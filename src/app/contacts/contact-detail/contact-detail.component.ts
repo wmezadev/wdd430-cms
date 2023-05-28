@@ -30,8 +30,8 @@ export class ContactDetailComponent implements OnInit {
 
   onDelete() {
     if (this.contact) {
-      this.contactService.deleteDocument(this.contact);
-      this.router.navigate(['/documents']);
+      this.contactService.deleteContact(this.contact);
+      this.router.navigate(['/contacts']);
     }
   }
 }
