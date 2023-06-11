@@ -6,5 +6,7 @@ import { Component } from '@angular/core';
   styleUrls: ['./contact-edit.component.css']
 })
 export class ContactEditComponent {
-
+  groupContacts: any;
+  onRemoveItem (i: any): void { }
+  onCancel (): void { }
 }
