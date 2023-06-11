@@ -8,4 +8,11 @@ import { Contact } from '../../contact.model';
 })
 export class ContactItemComponent {
   @Input() contact!: Contact;
+
+  setFallbackImage() {
+    // Set the fallback image URL
+    if(this.contact){
+      this.contact.imageUrl = 'https://placehold.co/60x80';
+    }
+  }
 }

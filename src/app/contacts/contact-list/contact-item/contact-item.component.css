@@ -1,0 +1,13 @@
+.contactItem{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.contactItem h3{
+    margin: 0;
+}
+
+.contactItem img{
+    max-height: 90px;
+}
