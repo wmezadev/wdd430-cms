@@ -2,12 +2,14 @@
     <div class="panel-heading">
       <div class="row">
         <div class="col-md-3">
-          <img [src]="contact?.imageUrl" class="img-responsive img-thumbnail">
+          <img [src]="contact?.imageUrl" (error)="setFallbackImage()" class="img-responsive img-thumbnail">
         </div>
         <div class="col-md-9">
           <h3>{{ contact?.name }}</h3>
-          <a [routerLink]="['edit']" class="btn btn-primary">Edit</a>
-          <button (click)="onDelete()" class="btn btn-danger">Delete</button>
+          <div class="contactActionButtons">
+            <a [routerLink]="['edit']" class="btn btn-primary">Edit</a>
+            <button (click)="onDelete()" class="btn btn-danger">Delete</button>
+          </div>
         </div>
       </div>
     </div>

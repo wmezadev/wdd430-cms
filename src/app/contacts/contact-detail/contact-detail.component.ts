@@ -34,4 +34,12 @@ export class ContactDetailComponent implements OnInit {
       this.router.navigate(['/contacts']);
     }
   }
+
+  setFallbackImage() {
+    // Set the fallback image URL
+    if(this.contact){
+      this.contact.imageUrl = 'https://placehold.co/60x80';
+    }
+  }
+  
 }
