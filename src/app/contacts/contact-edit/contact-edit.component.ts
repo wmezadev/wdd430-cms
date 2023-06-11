@@ -48,7 +48,7 @@ export class ContactEditComponent implements OnInit {
       values.email,
       values.phone,
       values.imageUrl || '',
-      null // group pending
+      this.groupContacts
     );
 
     if (this.editMode && this.originalContact) {
