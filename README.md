@@ -1,4 +1,8 @@
-# Wdd430Cms
+# Angular CMS Project for WDD 430
+
+This project is part of the BYU-Idaho WDD 430 course as a series of developmental assignments each week.
+
+## Getting started
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.6.
 
