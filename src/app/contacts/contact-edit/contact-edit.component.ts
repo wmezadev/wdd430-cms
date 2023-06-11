@@ -64,7 +64,13 @@ export class ContactEditComponent implements OnInit {
     this.router.navigate(['/contacts']);
   }
 
-  onRemoveItem(i: any) {}
+  onRemoveItem(index: number) {
+    if (index < 0 || index >= this.groupContacts.length) {
+      return; // Index is out of range, exit method
+    }
+    this.groupContacts.splice(index, 1); // Remove the contact at the specified index from the groupContacts array
+  }
+  
 
   addToGroup($event: any) {
     const selectedContact: Contact = $event.dragData;
