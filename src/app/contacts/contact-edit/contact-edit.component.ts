@@ -3,7 +3,6 @@ import { NgForm } from '@angular/forms';
 import { Router, ActivatedRoute, Params } from '@angular/router';
 import { ContactService } from '../contact.service';
 import { Contact } from '../contact.model';
-import { group } from '@angular/animations';
 
 @Component({
   selector: 'cms-contact-edit',
@@ -66,4 +65,28 @@ export class ContactEditComponent implements OnInit {
   }
 
   onRemoveItem(i: any) {}
+
+  addToGroup($event: any) {
+    const selectedContact: Contact = $event.dragData;
+    const invalidGroupContact = this.isInvalidContact(selectedContact);
+    if (invalidGroupContact) {
+      return; // Contact already in the group, exit method
+    }
+    this.groupContacts.push(selectedContact); // Add the selectedContact to the groupContacts array
+  }
+
+  isInvalidContact(newContact: Contact): boolean {
+    if (!newContact) {
+    return true; // newContact has no value
+    }
+    if (this.contact && newContact.id === this.contact.id) {
+      return true; // Same contact, already in the group
+    }
+    for (let i = 0; i < this.groupContacts.length; i++) {
+      if (newContact.id === this.groupContacts[i].id) {
+        return true; // Contact already exists in the groupContacts array
+      }
+    }
+    return false; // Valid contact, not in the group
+  }
 }
