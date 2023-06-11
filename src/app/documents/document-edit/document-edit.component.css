@@ -1,3 +1,14 @@
 input.ng-invalid {
   border: 1px solid red;
 }
+
+.pad-left-right{
+  padding-left:1rem;
+  padding-right:1rem;
+}
+
+.title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  margin: 0;
+}
