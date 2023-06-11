@@ -13,3 +13,8 @@
   margin-left:1rem;
   margin-right:1rem;
 }
+
+.documentActionButtons{
+  display: flex;
+  gap: .5rem;
+}

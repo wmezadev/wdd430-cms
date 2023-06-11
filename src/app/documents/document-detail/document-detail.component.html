@@ -2,7 +2,7 @@
   <div class="panel-heading">
     <div class="row pad-all">
       <h4 class="title margin-left-right">{{document?.name}}</h4>
-      <div class="row pull-right margin-left-right">
+      <div class="row pull-right margin-left-right documentActionButtons">
         <button (click)="onView()"  target="_blank" class="btn btn-primary">View</button>
         <a [routerLink]="['edit']" class="btn btn-info" >Edit</a>
         <button (click)="onDelete()" class="btn btn-danger">Delete</button>
