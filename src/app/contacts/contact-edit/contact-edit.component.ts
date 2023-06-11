@@ -14,6 +14,7 @@ export class ContactEditComponent implements OnInit {
   contact: Contact = new Contact('', '', '', '', '', null);
   editMode = false;
   groupContacts: Contact[] = [];
+  hasInvalidGroupContact: boolean = false;
 
   constructor(
     private contactService: ContactService,
@@ -48,7 +49,7 @@ export class ContactEditComponent implements OnInit {
       values.email,
       values.phone,
       values.imageUrl || '',
-      this.groupContacts
+      this.groupContacts.length > 0 ? this.groupContacts : null
     );
 
     if (this.editMode && this.originalContact) {
@@ -76,14 +77,16 @@ export class ContactEditComponent implements OnInit {
     const selectedContact: Contact = $event.dragData;
     const invalidGroupContact = this.isInvalidContact(selectedContact);
     if (invalidGroupContact) {
+      this.hasInvalidGroupContact = true;
       return; // Contact already in the group, exit method
     }
+    this.hasInvalidGroupContact = false;
     this.groupContacts.push(selectedContact); // Add the selectedContact to the groupContacts array
   }
 
   isInvalidContact(newContact: Contact): boolean {
     if (!newContact) {
-    return true; // newContact has no value
+      return true; // newContact has no value
     }
     if (this.contact && newContact.id === this.contact.id) {
       return true; // Same contact, already in the group

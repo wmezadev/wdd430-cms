@@ -82,6 +82,9 @@
         <div class="row">
           <div class="col-sm-12 form-group">
             <label for="groupList">Group Contacts:</label>
+            <div class="alert alert-danger" *ngIf="hasInvalidGroupContact">
+              Contact can not be added to the group. If is already in group or is the current contact
+            </div>
             <div 
               [dropZones]="['contactGroup']" 
               (onDropSuccess)="addToGroup($event)"
@@ -93,7 +96,9 @@
                 <cms-contact-item class="col-sm-11" [contact]="contact"></cms-contact-item>
                 <button class="btn btn-danger col-sm-2 deleteButton" (click)="onRemoveItem(i)">X</button>
               </div>
-              <span class="dragMsg" *ngIf="!groupContacts || groupContacts.length < 1">Drag contacts in group here</span>
+              <span class="dragMsg" *ngIf="!groupContacts || groupContacts.length < 1">
+                Drag contacts in group here
+              </span>
             </div>
   
           </div>
