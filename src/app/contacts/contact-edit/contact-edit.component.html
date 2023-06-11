@@ -1,15 +1,23 @@
 <div class="panel panel-default">
     <div class="panel-body">
-      <form id="contact-edit">
+      <form id="contact-edit" #f="ngForm" (ngSubmit)="onSubmit(f)">
         <div class="row">
           <div class="col-sm-12 form-group">
             <label for="name">Name:</label>
             <input
-              type="text"
-              id="name"
+              #name="ngModel"
+              [(ngModel)]="contact.name"
               class="form-control required"
+              id="name"
+              max="120"
+              name="name"
+              required
               size="120"
-              max="120">
+              type="text"
+            >
+            <div class="alert alert-danger" *ngIf="name.invalid && name.touched">
+              The Name field is required.
+            </div>
           </div>
         </div>
   
@@ -17,11 +25,20 @@
           <div class="col-sm-12 form-group">
             <label for="email">Email:</label>
             <input
-              type="text"
-              id="email"
+              #email="ngModel"
+              [(ngModel)]="contact.email"
               class="form-control required"
+              id="email"
+              max="255"
+              name="email"
+              pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,3}$"
+              required
               size="120"
-              max="255">
+              type="text"
+            >
+          </div>
+          <div class="alert alert-danger" *ngIf="email.invalid && email.touched">
+            Enter a valid Email address.
           </div>
         </div>
   
@@ -29,12 +46,19 @@
           <div class="col-sm-12 form-group">
             <label for="phone">Phone:</label>
             <input
-              type="text"
+              #phone="ngModel"
+              [(ngModel)]="contact.phone"
+              class="form-control required"
               id="phone"
-              class="form-control invalid"
-              size="150"
-              max="255">
-  
+              max="255"
+              name="phone"
+              pattern="\D*([2-9]\d{2})(\D*)([2-9]\d{2})(\D*)(\d{4})\D*"
+              required
+              type="tel"
+            >
+          </div>
+          <div class="alert alert-danger" *ngIf="phone.invalid && phone.touched">
+            Enter a valid Phone.
           </div>
         </div>
   
@@ -63,7 +87,7 @@
                   <button class="btn btn-danger col-sm-2 deleteButton" (click)="onRemoveItem(i)">X</button>
                 </div>
               </div>
-              <span class="dragMsg" *ngIf="groupContacts?.length < 1">Drag contacts in group here</span>
+              <span class="dragMsg" *ngIf="!groupContacts || groupContacts.length < 1">Drag contacts in group here</span>
             </div>
   
           </div>
