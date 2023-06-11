@@ -44,7 +44,7 @@ export class DocumentEditComponent implements OnInit {
     const values = form.value;
     // Assign form values to newDocument properties
     const newDocument = new Document(
-      this.document.id, 
+      `${Math.floor(Math.random() * 1000) + 1}`, // random string 
       values.name, 
       values.description, 
       values.url, 

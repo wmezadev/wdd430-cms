@@ -66,11 +66,16 @@
           <div class="col-sm-12 form-group">
             <label for="imageUrl">Image URL:</label>
             <input
-              type="text"
-              id="imageUrl"
+              #imageUrl="ngModel"
+              [(ngModel)]="contact.imageUrl"
               class="form-control"
-              size="150"
-              max="255">
+              id="imageUrl"
+              name="imageUrl"
+              type="url"
+            >
+            <div class="alert alert-danger" *ngIf="imageUrl.invalid && imageUrl.touched">
+              Enter a valid Image URL.
+            </div>
           </div>
         </div>
   
@@ -96,7 +101,7 @@
   
         <div class="row">
           <div class="col-xs-12 btn-toolbar">
-            <button class="btn btn-success" type="submit">Save</button>
+            <button  [disabled]="f.invalid" class="btn btn-success" type="submit">Save</button>
             <button class="btn btn-primary" type="button" (click)="onCancel()">Cancel</button>
           </div>
         </div>
