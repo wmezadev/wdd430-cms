@@ -44,12 +44,12 @@ export class DocumentEditComponent implements OnInit {
     const values = form.value;
     // Assign form values to newDocument properties
     const newDocument = new Document(
-      `${Math.floor(Math.random() * 1000) + 1}`, // random string 
+      "",
       values.name, 
       values.description, 
       values.url, 
       []
-    );    
+    );
 
     if (this.editMode && this.originalDocument) {
       this.documentService.updateDocument(this.originalDocument, newDocument);

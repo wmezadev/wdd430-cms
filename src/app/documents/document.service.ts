@@ -8,6 +8,7 @@ import { MOCKDOCUMENTS } from './MOCKDOCUMENTS';
   providedIn: 'root'
 })
 export class DocumentService {
+  documentsUrl = `${import.meta.env['NG_APP_FIREBASE_URL']}/documents.json`;
   documents: Document[] = [];
   maxDocumentId: number;
   documentListChangedEvent = new Subject<Document[]>();
@@ -19,20 +20,44 @@ export class DocumentService {
     this.getDocuments();
   }
 
-  addDocument(newDocument: Document) {
-    if (!newDocument) {
+  storeDocuments() {
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    const documentsString = JSON.stringify(this.documents);
+    this.http.put(this.documentsUrl, documentsString, { headers })
+    .subscribe({
+      next: () => {
+        this.documentListChangedEvent.next(this.documents.slice());
+      },
+      error: (error: any) => {
+        console.error('Error storing documents:', error);
+      }
+    });
+  }
+  
+  addDocument(document: Document) {
+    if (document == null || !document.name) {
       return;
     }
-  
-    this.maxDocumentId++;
-    newDocument.id = `${this.maxDocumentId}`;
-    this.documents.push(newDocument);
-    const documentsListClone = this.documents.slice();
-    this.documentListChangedEvent.next(documentsListClone);
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    document.id = `${this.getMaxId() +1}`;
+    const newDocument = JSON.parse(JSON.stringify(document));
+    this.http.post<{ name: string }>(
+      this.documentsUrl,
+      newDocument,
+      { headers }
+    ).subscribe({
+      next: (responseData) => {
+        this.documents.push(document);
+        this.storeDocuments();
+      },
+      error: (error: any) => {
+        console.error('Error adding document:', error);
+      }
+    });
   }
 
   getDocuments() {
-    this.http.get<Document[]>(`${import.meta.env['NG_APP_FIREBASE_URL']}/documents.json`)
+    this.http.get<Document[]>(this.documentsUrl)
       .subscribe({
         next: (documents: Document[] ) => {
           this.documents = documents;
@@ -54,27 +79,25 @@ export class DocumentService {
     if (!originalDocument || !newDocument) {
       return;
     }
-  
-    const pos = this.documents.indexOf(originalDocument);
-    if (pos < 0) {
+    const index = this.documents.findIndex(d => d.id === originalDocument.id);
+    if (index === -1) {
       return;
     }
-  
     newDocument.id = originalDocument.id;
-    this.documents[pos] = newDocument;
-    this.documentListChangedEvent.next(this.documents.slice());
-  }  
+    this.documents[index] = newDocument;
+    this.storeDocuments();
+  }
 
   deleteDocument(document: Document) {
     if (!document) {
       return;
     }
-    const pos = this.documents.indexOf(document);
-    if (pos < 0) {
+    const index = this.documents.findIndex(d => d.id === document.id);
+    if (index === -1) {
       return;
     }
-    this.documents.splice(pos, 1);
-    this.documentListChangedEvent.next(this.documents.slice());
+    this.documents.splice(index, 1);
+    this.storeDocuments();
   }
 
   getMaxId(): number {
@@ -86,5 +109,5 @@ export class DocumentService {
       }
     }
     return maxId;
-  }  
+  }
 }
