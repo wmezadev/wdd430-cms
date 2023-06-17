@@ -1,5 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
-import { Subject } from 'rxjs';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Subject, map } from 'rxjs';
 import { Document } from './document.model';
 import { MOCKDOCUMENTS } from './MOCKDOCUMENTS';
 
@@ -12,9 +13,10 @@ export class DocumentService {
   documentListChangedEvent = new Subject<Document[]>();
   documentSelectedEvent = new EventEmitter<Document>();
 
-  constructor() {
+  constructor(private http: HttpClient) {
     this.documents = MOCKDOCUMENTS;
     this.maxDocumentId = this.getMaxId();
+    this.getDocuments();
   }
 
   addDocument(newDocument: Document) {
@@ -29,9 +31,20 @@ export class DocumentService {
     this.documentListChangedEvent.next(documentsListClone);
   }
 
-  getDocuments(): Document[] {
-    return this.documents.slice();
-  }
+  getDocuments() {
+    this.http.get<Document[]>(`${import.meta.env['NG_APP_FIREBASE_URL']}/documents.json`)
+      .subscribe({
+        next: (documents: Document[] ) => {
+          this.documents = documents;
+          this.maxDocumentId = this.getMaxId();
+          this.documents.sort((a, b) => a.name.localeCompare(b.name));
+          this.documentListChangedEvent.next(this.documents.slice());
+        },
+        error: (error: any) => {
+          console.error('An error occurred:', error);
+        }
+      });
+  }  
 
   getDocument(id: string): Document | null {
     return this.documents.find(document => document.id === id) || null;
