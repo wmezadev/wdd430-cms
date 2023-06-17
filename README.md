@@ -6,6 +6,16 @@ This project is part of the BYU-Idaho WDD 430 course as a series of developmenta
 
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 15.2.6.
 
+## Enviroment variables
+
+Before starting, create a file `.env` an add your own Firebase url for your realtime database like this:
+
+```bash
+NG_APP_FIREBASE_URL=https://project-example-cms-default-rtdb.firebaseio.com
+```
+
+replace the url with your firebase url.
+
 ## Development server
 
 Run `ng serve` for a dev server. Navigate to `http://localhost:4200/`. The application will automatically reload if you change any of the source files.
