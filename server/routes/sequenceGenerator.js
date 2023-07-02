@@ -1,9 +1,9 @@
-var Sequence = require('../models/sequence');
+const Sequence = require('../models/sequence');
 
-var maxDocumentId;
-var maxMessageId;
-var maxContactId;
-var sequenceId = null;
+let maxDocumentId;
+let maxMessageId;
+let maxContactId;
+let sequenceId = null;
 
 function SequenceGenerator() {
   return Sequence.findOne()
