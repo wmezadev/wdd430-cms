@@ -1,6 +1,6 @@
 import { Injectable, EventEmitter } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Subject, map } from 'rxjs';
+import { Subject } from 'rxjs';
 import { Document } from './document.model';
 import { MOCKDOCUMENTS } from './MOCKDOCUMENTS';
 
@@ -8,7 +8,7 @@ import { MOCKDOCUMENTS } from './MOCKDOCUMENTS';
   providedIn: 'root'
 })
 export class DocumentService {
-  documentsUrl = `${import.meta.env['NG_APP_FIREBASE_URL']}/documents.json`;
+  documentsUrl = `${import.meta.env['NG_APP_API_URL']}/documents`;
   documents: Document[] = [];
   maxDocumentId: number;
   documentListChangedEvent = new Subject<Document[]>();
@@ -19,36 +19,22 @@ export class DocumentService {
     this.maxDocumentId = this.getMaxId();
     this.getDocuments();
   }
-
-  storeDocuments() {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    const documentsString = JSON.stringify(this.documents);
-    this.http.put(this.documentsUrl, documentsString, { headers })
-    .subscribe({
-      next: () => {
-        this.documentListChangedEvent.next(this.documents.slice());
-      },
-      error: (error: any) => {
-        console.error('Error storing documents:', error);
-      }
-    });
-  }
   
   addDocument(document: Document) {
     if (document == null || !document.name) {
       return;
     }
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     document.id = `${this.getMaxId() +1}`;
     const newDocument = JSON.parse(JSON.stringify(document));
-    this.http.post<{ name: string }>(
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    this.http.post<{ message: string, document: Document }>(
       this.documentsUrl,
       newDocument,
       { headers }
     ).subscribe({
-      next: (responseData) => {
-        this.documents.push(document);
-        this.storeDocuments();
+      next: (response) => {
+        this.documents.push(response.document);
+        this.sortAndSend();
       },
       error: (error: any) => {
         console.error('Error adding document:', error);
@@ -57,13 +43,11 @@ export class DocumentService {
   }
 
   getDocuments() {
-    this.http.get<Document[]>(this.documentsUrl)
+    this.http.get<{ message: string, documents: Document[]}>(this.documentsUrl)
       .subscribe({
-        next: (documents: Document[] ) => {
-          this.documents = documents;
-          this.maxDocumentId = this.getMaxId();
-          this.documents.sort((a, b) => a.name.localeCompare(b.name));
-          this.documentListChangedEvent.next(this.documents.slice());
+        next: (response) => {
+          this.documents = response.documents;
+          this.sortAndSend();
         },
         error: (error: any) => {
           console.error('An error occurred:', error);
@@ -84,8 +68,20 @@ export class DocumentService {
       return;
     }
     newDocument.id = originalDocument.id;
-    this.documents[index] = newDocument;
-    this.storeDocuments();
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    this.http.put<{ message: string, document: Document }>(
+      `${this.documentsUrl}/${originalDocument.id}`,
+      newDocument,
+      { headers }
+    ).subscribe({
+      next: (response) => {
+        this.documents[index] = response.document;
+        this.sortAndSend();
+      },
+      error: (error: any) => {
+        console.error('Error adding contact:', error);
+      }
+    });
   }
 
   deleteDocument(document: Document) {
@@ -96,8 +92,13 @@ export class DocumentService {
     if (index === -1) {
       return;
     }
-    this.documents.splice(index, 1);
-    this.storeDocuments();
+    this.http.delete<{ message: string, document: Document}>(`${this.documentsUrl}/${document.id}`)
+      .subscribe(
+        (response) => {
+          this.documents.splice(index, 1);
+          this.sortAndSend();
+        }
+      );
   }
 
   getMaxId(): number {
@@ -109,5 +110,11 @@ export class DocumentService {
       }
     }
     return maxId;
+  }
+
+  sortAndSend(): void {
+    this.maxDocumentId = this.getMaxId();
+    this.documents.sort((a, b) => a.name.localeCompare(b.name));
+    this.documentListChangedEvent.next(this.documents.slice());
   }
 }
