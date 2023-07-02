@@ -2,7 +2,6 @@ import { EventEmitter, Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Subject } from 'rxjs';
 import { Contact } from './contact.model';
-import { MOCKCONTACTS } from './MOCKCONTACTS';
 
 @Injectable({
   providedIn: 'root'
@@ -16,7 +15,7 @@ export class ContactService {
   contactChangedEvent: EventEmitter<Contact[]> = new EventEmitter<Contact[]>();
 
   constructor(private http: HttpClient) {
-    this.contacts = MOCKCONTACTS;
+    this.contacts = [];
     this.maxContactId = this.getMaxId();
     this.getContacts();
   }
