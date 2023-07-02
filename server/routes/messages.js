@@ -30,7 +30,7 @@ router.post('/', (req, res, next) => {
     id: maxMessageId.toString(),
     subject: req.body.subject,
     msgText: req.body.msgText,
-    sender: mongoose.Types.ObjectId(req.body.sender)
+    // sender: mongoose.Types.ObjectId(req.body.sender)
   });
 
   message.save()
@@ -77,8 +77,9 @@ router.put('/:id', (req, res, next) => {
     {
       $set: {
         name: req.body.name,
-        description: req.body.description,
-        url: req.body.url
+        subject: req.body.subject,
+        msgText: req.body.msgText,
+        // sender: mongoose.Types.ObjectId(req.body.sender)
       }
     }
   )

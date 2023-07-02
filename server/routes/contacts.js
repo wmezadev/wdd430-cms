@@ -84,8 +84,9 @@ router.put('/:id', (req, res, next) => {
     {
       $set: {
         name: req.body.name,
-        description: req.body.description,
-        url: req.body.url
+        email: req.body.email,
+        phone: req.body.phone,
+        imageUrl: req.body.imageUrl
       }
     }
   )
