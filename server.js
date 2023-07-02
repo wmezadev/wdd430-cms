@@ -5,6 +5,7 @@ var http = require('http');
 var bodyParser = require('body-parser');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var mongoose = require('mongoose');
 
 // import the routing file to handle the default (index) route
 var index = require('./server/routes/app');
@@ -13,6 +14,24 @@ var documents = require('./server/routes/documents');
 var messages = require('./server/routes/messages');
 
 // ... ADD CODE TO IMPORT YOUR ROUTING FILES HERE ... 
+
+// Connect to MongoDB
+mongoose.connect('mongodb://localhost/cms', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+});
+
+mongoose.connection.on('connected', function() {
+  console.log('Connected to MongoDB');
+});
+
+mongoose.connection.on('error', function(err) {
+  console.log('MongoDB connection error: ' + err);
+});
+
+mongoose.connection.on('disconnected', function() {
+  console.log('Disconnected from MongoDB');
+});
 
 var app = express(); // create an instance of express
 
@@ -50,9 +69,9 @@ app.use('/documents', documents);
 app.use('/messages', messages);
 
 // Tell express to map all other non-defined routes back to the index page
-app.get('*', (req, res) => {
+/* app.get('*', (req, res) => {
   res.sendFile(path.join(__dirname, 'dist/cms/index.html'));
-});
+}); */
 
 // Define the port address and tell express to use this port
 const port = process.env.PORT || '3000';
