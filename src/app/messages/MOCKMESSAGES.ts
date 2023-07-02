@@ -1,6 +1,6 @@
 import { Message } from './message.model';
 
-export const MOCKMESSAGES: Message[] = [
+export const MOCKMESSAGES = [
   {
     id: '1', 
    subject: 'CIT 366 assignment 1', 

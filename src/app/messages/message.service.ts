@@ -1,62 +1,50 @@
-import { EventEmitter, Injectable } from '@angular/core';
+import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Subject } from 'rxjs';
 import { Message } from './message.model';
-import { MOCKMESSAGES } from './MOCKMESSAGES';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MessageService {
-  messagesUrl = `${import.meta.env['NG_APP_FIREBASE_URL']}/messages.json`;
+  messagesUrl = `${import.meta.env['NG_APP_API_URL']}/messages`;
   messages: Message[] = [];
-  messageChangedEvent = new EventEmitter<Message[]>();
+  maxMessageId: number;
+  messageListChangedEvent = new Subject<Message[]>();
 
   constructor(private http: HttpClient) {
-    this.messages = MOCKMESSAGES;
+    this.messages = [];
+    this.maxMessageId = this.getMaxId();
     this.getMessages();
-  }
-  
-  storeMessages() {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    const messagesString = JSON.stringify(this.messages);
-    this.http.put(this.messagesUrl, messagesString, { headers })
-    .subscribe({
-      next: () => {
-        this.messageChangedEvent.next(this.messages.slice());
-      },
-      error: (error: any) => {
-        console.error('Error storing messages:', error);
-      }
-    });
   }
 
   addMessage(message: Message) {
     if (!message) {
       return;
     }
+    const newMessage = JSON.parse(JSON.stringify(message));
     const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    const newDocument = JSON.parse(JSON.stringify(message));
-    this.http.post<{ name: string }>(
+    this.http.post<{ message: string, data: Message }>(
       this.messagesUrl,
-      newDocument,
+      newMessage,
       { headers }
     ).subscribe({
-      next: (responseData) => {
-        this.messages.push(message);
-        this.storeMessages();
+      next: (response) => {
+        this.messages.push(response.data);
+        this.sortAndSend();
       },
       error: (error: any) => {
-        console.error('Error adding message:', error);
+        console.error('Error adding document:', error);
       }
     });
   }
 
   getMessages() {
-    this.http.get<Message[]>(this.messagesUrl)
+    this.http.get<{ message: string, data: Message[] }>(this.messagesUrl)
       .subscribe({
-        next: (messages: Message[] ) => {
-          this.messages = messages;
-          this.messageChangedEvent.next(this.messages.slice());
+        next: (response) => {
+          this.messages = response.data;
+          this.sortAndSend();
         },
         error: (error: any) => {
           console.error('An error occurred:', error);
@@ -66,5 +54,22 @@ export class MessageService {
 
   getMessage(id: string): Message | null {
     return this.messages.find(message => message.id === id) || null;
+  }
+
+  getMaxId(): number {
+    let maxId = 0;
+    for (const message of this.messages) {
+      const currentId = parseInt(message.id);
+      if (currentId > maxId) {
+        maxId = currentId;
+      }
+    }
+    return maxId;
+  }
+
+  sortAndSend(): void {
+    this.maxMessageId = this.getMaxId();
+    //this.messages.sort((a, b) => a.id.localeCompare(b.id));
+    this.messageListChangedEvent.next(this.messages.slice());
   }
 }
