@@ -11,7 +11,7 @@ This project was generated with [Angular CLI](https://github.com/angular/angular
 Before starting, create a file `.env` an add your own Firebase url for your realtime database like this:
 
 ```bash
-NG_APP_FIREBASE_URL=https://project-example-cms-default-rtdb.firebaseio.com
+NG_APP_API_URL=https://project-example-cms-default-rtdb.firebaseio.com
 ```
 
 replace the url with your firebase url.

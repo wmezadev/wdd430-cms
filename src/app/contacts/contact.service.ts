@@ -8,7 +8,7 @@ import { MOCKCONTACTS } from './MOCKCONTACTS';
   providedIn: 'root'
 })
 export class ContactService {
-  contactsUrl = `${import.meta.env['NG_APP_FIREBASE_URL']}/contacts.json`;
+  contactsUrl = `${import.meta.env['NG_APP_API_URL']}/contacts`;
   contacts: Contact[] = [];
   maxContactId: number;
   contactSelectedEvent = new EventEmitter<Contact>();
@@ -21,35 +21,21 @@ export class ContactService {
     this.getContacts();
   }
 
-  storeContacts() {
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
-    const contactsString = JSON.stringify(this.contacts);
-    this.http.put(this.contactsUrl, contactsString, { headers })
-    .subscribe({
-      next: () => {
-        this.contactListChangedEvent.next(this.contacts.slice());
-      },
-      error: (error: any) => {
-        console.error('Error storing contacts:', error);
-      }
-    });
-  }
-
   addContact(contact: Contact) {
     if (contact == null || !contact.name) {
       return;
     }
-    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
     contact.id = `${this.getMaxId() +1}`;
     const newContact = JSON.parse(JSON.stringify(contact));
-    this.http.post<{ name: string }>(
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    this.http.post<{ message: string, contact: Contact }>(
       this.contactsUrl,
       newContact,
       { headers }
     ).subscribe({
-      next: (responseData) => {
-        this.contacts.push(contact);
-        this.storeContacts();
+      next: (response) => {
+        this.contacts.push(response.contact);
+        this.sortAndSend();
       },
       error: (error: any) => {
         console.error('Error adding contact:', error);
@@ -66,18 +52,28 @@ export class ContactService {
       return;
     }
     newContact.id = originalContact.id;
-    this.contacts[index] = newContact;
-    this.storeContacts();
+    const headers = new HttpHeaders({ 'Content-Type': 'application/json' });
+    this.http.put<{ message: string, contact: Contact }>(
+      `${this.contactsUrl}/${originalContact.id}`,
+      newContact,
+      { headers }
+    ).subscribe({
+      next: (response) => {
+        this.contacts[index] = response.contact;
+        this.sortAndSend();
+      },
+      error: (error: any) => {
+        console.error('Error adding contact:', error);
+      }
+    });
   }
 
   getContacts() {
-    this.http.get<Contact[]>(this.contactsUrl)
+    this.http.get<{ message: string, contacts: Contact[]}>(this.contactsUrl)
       .subscribe({
-        next: (contacts: Contact[] ) => {
-          this.contacts = contacts;
-          this.maxContactId = this.getMaxId();
-          this.contacts.sort((a, b) => a.name.localeCompare(b.name));
-          this.contactListChangedEvent.next(this.contacts.slice());
+        next: (response) => {
+          this.contacts = response.contacts;
+          this.sortAndSend();
         },
         error: (error: any) => {
           console.error('An error occurred:', error);
@@ -97,8 +93,13 @@ export class ContactService {
     if (index === -1) {
       return;
     }
-    this.contacts.splice(index, 1);
-    this.storeContacts();
+    this.http.delete<{ message: string, contact: Contact}>(`${this.contactsUrl}/${contact.id}`)
+      .subscribe(
+        (response) => {
+          this.contacts.splice(index, 1);
+          this.sortAndSend();
+        }
+      );
   }
 
   getMaxId(): number {
@@ -110,5 +111,11 @@ export class ContactService {
       }
     }
     return maxId;
+  }
+
+  sortAndSend(): void {
+    this.maxContactId = this.getMaxId();
+    this.contacts.sort((a, b) => a.name.localeCompare(b.name));
+    this.contactListChangedEvent.next(this.contacts.slice());
   }
 }
