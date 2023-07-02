@@ -48,7 +48,7 @@ router.post('/', (req, res, next) => {
 });
 
 /* Get document by id */
-router.put('/:id', (req, res, next) => {
+router.get('/:id', (req, res, next) => {
   const documentId = req.params.id;
 
   Document.findOne({ id: documentId })

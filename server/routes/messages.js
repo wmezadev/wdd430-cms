@@ -11,7 +11,7 @@ router.get('/', (req, res, next) => {
     .then(messages => {
       res.status(200).json({
         message: 'Messages fetched successfully',
-        messages: messages
+        data: messages
       });
     })
     .catch(error => {
@@ -37,7 +37,7 @@ router.post('/', (req, res, next) => {
     .then(createdMessage => {
       res.status(201).json({
         message: 'Message added successfully',
-        message: createdMessage
+        data: createdMessage
       });
     })
     .catch(error => {
@@ -49,7 +49,7 @@ router.post('/', (req, res, next) => {
 });
 
 /* Get message by id */
-router.put('/:id', (req, res, next) => {
+router.get('/:id', (req, res, next) => {
   const messageId = req.params.id;
 
   Message.findOne({ id: messageId })
@@ -57,7 +57,7 @@ router.put('/:id', (req, res, next) => {
     .then(message => {
       res.status(200).json({
         message: 'Message fetched successfully',
-        message: message
+        data: message
       });
     })
     .catch(error => {
@@ -87,7 +87,7 @@ router.put('/:id', (req, res, next) => {
   .then(updatedMessage => {
     res.status(204).json({
       message: 'Message updated successfully',
-      message: updatedMessage
+      data: updatedMessage
     });
   })
   .catch(error => {
